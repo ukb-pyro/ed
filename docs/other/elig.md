@@ -158,3 +158,4 @@ If you want, I’ll turn the I-983 skeleton above into a full training plan para
 [21]: https://science.osti.gov/wdts/scgsr/Eligibility?utm_source=chatgpt.com "SCGSR Eligibility | U.S. DOE Office of Science (SC)"
 [22]: https://www.ice.gov/doclib/sevis/pdf/i983.pdf?utm_source=chatgpt.com "i983.pdf"
 
+
