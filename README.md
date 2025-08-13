@@ -1,4 +1,4 @@
-#ed #energy 
+`#ed` `#energy`     
 - Frailty/System: Industry-Wide Energy Needs
 - Epistemology/Enterprise: Ukubona LLC NAICS
 - Agency/Man: OPT STEM for Edward
