@@ -1,2 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ukubona Manifesto — Fractal Ontology × Nested Epistemology</title>
+<style>
+  :root{
+    --bg:#0b0d0f; --panel:#0f1216; --text:#e7efe9; --muted:#9fb0a6; --edge:#1f2326;
+    --accent:#8ee8ff; --ring:#192026; --glow:rgba(142,232,255,.15);
+    --p1:#e9d66b; /* God */
+    --p2:#f4a261; /* Animal */
+    --p3:#e76f51; /* Man */
+    --p4:#2a9d8f; /* Enterprise */
+    --p5:#4b7bec; /* Systems */
+    --i1:#ffd699; /* Play */
+    --i2:#ffb3b3; /* Ontology */
+    --i3:#b3d1ff; /* Agency */
+    --i4:#b3ffb3; /* Epistemology */
+    --i5:#d1b3ff; /* Frailty */
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:radial-gradient(1200px 800px at 20% -10%, #11161b, var(--bg));
+    color:var(--text);
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif
+  }
+  .app{display:grid;grid-template-columns:420px 1fr;gap:16px;height:100%}
+  @media (max-width: 1100px){.app{grid-template-columns:1fr;grid-auto-rows:min-content 1fr}}
 
-.
+  .sidebar{background:linear-gradient(180deg, #0f1419, var(--panel)); border-left:1px solid var(--edge); padding:18px 18px 24px}
+  .sidebar h1{font-size:20px;margin:0 0 2px}
+  .sidebar .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+  .box{background:#0b0f13;border:1px solid var(--edge);border-radius:16px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.35);margin-bottom:12px}
+  .box h2{margin:0 0 6px;font-size:15px}
+  .box ul{margin:8px 0 0 18px;padding:0}
+  .box li{margin:4px 0}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#12171c;border:1px solid var(--edge);font-size:12px;color:var(--muted);margin-right:6px}
+  .hint{margin-top:8px;color:var(--muted);font-size:12px}
+
+  .epigraph{background:#0b0f13;border:1px dashed var(--edge);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+  .epigraph p{margin:6px 0;color:var(--muted);font-style:italic}
+  .epigraph p strong{color:var(--text);font-style:normal}
+
+  .legend{margin-top:8px}
+  .legend .row{display:flex;align-items:center;gap:8px;margin:6px 0}
+  .swatch{width:12px;height:12px;border-radius:3px;border:1px solid var(--edge)}
+
+  .toolbar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .btn{background:#12171c;border:1px solid var(--edge);color:var(--text);padding:8px 10px;border-radius:10px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:#2a3139}
+  .btn[aria-pressed="true"]{outline:2px solid var(--accent)}
+
+  .stage{position:relative;overflow:hidden}
+  svg{width:100%;height:100%;display:block}
+
+  .node{cursor:pointer;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+  .node circle{stroke:#0a0d10;stroke-width:2}
+  .node text{font-weight:600;letter-spacing:.2px}
+  .node:hover{filter:drop-shadow(0 10px 24px rgba(0,0,0,.5))}
+
+  .ring{fill:none;stroke:var(--ring);stroke-width:1.2}
+  .arrow{stroke:#4c5966;stroke-width:1.4;fill:none;marker-end:url(#arrowhead)}
+  .cycle{stroke:var(--muted);stroke-width:1.2;fill:none;stroke-dasharray:4 5;opacity:.65}
+  .connector{stroke:var(--accent);stroke-width:1.6;opacity:.0}
+  .glow{filter: drop-shadow(0 0 22px var(--glow))}
+
+  /* staged entrance */
+  .fade-in{opacity:0;transform:scale(.92);animation:fadeIn .55s ease forwards}
+  .delay-1{animation-delay:.05s} .delay-2{animation-delay:.1s} .delay-3{animation-delay:.15s} .delay-4{animation-delay:.2s} .delay-5{animation-delay:.25s}
+  @keyframes fadeIn{to{opacity:1;transform:scale(1)}}
+
+  .innerHidden{opacity:0;pointer-events:none}
+  .innerShown{opacity:1;pointer-events:auto;transition:opacity .45s ease}
+
+  .caption{fill:var(--muted);font-weight:600;letter-spacing:.3px}
+  .caption.title{fill:var(--text);font-size:14px}
+  .caption.sub{font-size:12px}
+  .pill-bg{fill:#12171c;stroke:var(--edge);stroke-width:1}
+  .pill-text{fill:#e7efe9;font-size:12px;font-weight:700}
+
+  /* tertiary (Frailty) micro-pentad */
+  .microHidden{opacity:0;pointer-events:none}
+  .microShown{opacity:1;pointer-events:auto;transition:opacity .35s ease}
+  .tinyNode text{font-size:10px}
+  .tinyNode circle{stroke:#0a0d10;stroke-width:1.5}
+
+  /* tooltip */
+  .tooltip{
+    position:absolute; left:0; top:0; transform:translate(-50%,-140%);
+    background:#10161b; border:1px solid var(--edge); border-radius:10px;
+    padding:8px 10px; font-size:12px; color:var(--text);
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    pointer-events:none; white-space:nowrap; opacity:0; transition:opacity .12s ease;
+  }
+
+  /* 5×5 Matrix (modal) */
+  .modal {
+    position: fixed; inset: 0; display: none; place-items: center;
+    background: rgba(5,8,11,.55); backdrop-filter: blur(4px); z-index: 50;
+  }
+  .modal.show { display: grid; }
+  .modal-card{
+    width:min(980px, 95vw); max-height:85vh; overflow:auto;
+    background:#0b0f13; border:1px solid var(--edge); border-radius:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5); padding:16px 16px 10px;
+  }
+  .modal-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px}
+  .modal-head h3{margin:0; font-size:16px}
+  .modal-close{background:#12171c; border:1px solid var(--edge); color:var(--text); border-radius:10px; padding:6px 10px; cursor:pointer}
+  .matrix{width:100%; border-collapse:separate; border-spacing:0}
+  .matrix th, .matrix td{padding:10px 12px; border-bottom:1px solid var(--edge); vertical-align:top; font-size:13px}
+  .matrix thead th{position:sticky; top:0; background:#0b0f13; z-index:1; color:var(--muted); font-weight:700}
+  .matrix tbody th{color:var(--muted); width:190px; text-align:left}
+  .matrix td{background:linear-gradient(180deg,#0c1116,#0a0e12)}
+  .matrix td:hover{outline:1px solid var(--accent); cursor:pointer}
+  .badge{display:inline-block; padding:2px 8px; border:1px solid var(--edge); border-radius:999px; font-size:11px; color:var(--muted); margin-right:6px}
+  .stagePlay{background:var(--i1,.none)}
+  .stageOntology{background:var(--i2,.none)}
+  .stageAgency{background:var(--i3,.none)}
+  .stageEpistemology{background:var(--i4,.none)}
+  .stageFrailty{background:var(--i5,.none)}
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Ukubona Manifesto</h1>
+      <div class="sub">Fractal Ontology × Nested Epistemology (at <strong>Enterprise</strong>)</div>
+
+      <div class="box">
+        <h2>Thesis</h2>
+        <ul>
+          <li><strong>Ontology, fractal:</strong> God → Animal → Man → Enterprise → Systems.</li>
+          <li><strong>Epistemology, nested:</strong> Enterprise reveals FEAOP: Play → Ontology → Agency → Epistemology → Frailty.</li>
+          <li><strong>Ukubona:</strong> the perspectival orchestrator inside health systems.</li>
+        </ul>
+        <div class="hint">Click <strong>Enterprise</strong> to open the inner pentad. Toggle Nietzsche ⇄ Marx to see the class/role alignment.</div>
+      </div>
+
+      <!-- Epigraph -->
+      <div class="epigraph" aria-label="Epigraph">
+        <p>— <strong>We are not original</strong></p>
+        <p>— Think of us as <strong>seeds</strong></p>
+        <p>— Our forbears were the <strong>fruit</strong></p>
+      </div>
+
+      <div class="box" id="panel">
+        <h2 id="panelTitle">Metamorphosis</h2>
+        <div id="panelTags">
+          <span class="tag">Outer ring</span>
+          <span class="tag">Click a node</span>
+        </div>
+        <ul id="panelList"></ul>
+      </div>
+
+      <div class="box" id="frailtyBox" style="display:none">
+        <h2>Frailty — Fried Phenotype (5)</h2>
+        <ul>
+          <li>Unintentional weight loss</li>
+          <li>Exhaustion</li>
+          <li>Weakness (grip strength)</li>
+          <li>Slowness (gait speed)</li>
+          <li>Low physical activity</li>
+        </ul>
+        <div class="hint">Mirrors the tertiary micro-pentad that appears on the Frailty node.</div>
+      </div>
+
+      <div class="legend" id="legend"></div>
+      <div class="toolbar">
+        <button class="btn" id="resetBtn" title="Reset view">Reset (R)</button>
+        <button class="btn" id="toggleConnect" aria-pressed="false" title="Show ring-to-ring connectors">Connect rings (C)</button>
+        <button class="btn" id="toggleFrailty" aria-pressed="false" title="Show Fried criteria">Frailty details (F)</button>
+        <button class="btn" id="toggleNM" aria-pressed="false" title="Toggle Nietzsche/Marx view">Nietzsche ⇄ Marx (N)</button>
+        <button class="btn" id="openMatrix" title="Open 5×5 matrix">5×5 Matrix (M)</button>
+      </div>
+
+      <div class="box">
+        <h2>Keyboard</h2>
+        <ul>
+          <li><strong>Tab</strong> to focus nodes, <strong>Enter/Space</strong> to activate.</li>
+          <li><strong>N</strong>: Nietzsche ⇄ Marx • <strong>C</strong>: Connect • <strong>F</strong>: Frailty • <strong>R</strong>: Reset • <strong>M</strong>: Matrix</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="stage" aria-label="Interactive diagram">
+      <svg viewBox="-640 -440 1280 880" role="img" aria-labelledby="title desc">
+        <title id="title">Fractal Ontology with Nested Epistemology</title>
+        <desc id="desc">Outer metamorphosis pentad with clickable nodes; inner metaphysics pentad appears when Enterprise is selected. Ukubona sits at the perspectival threshold.</desc>
+
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#4c5966" />
+          </marker>
+        </defs>
+
+        <!-- Outer ring guide -->
+        <circle class="ring" cx="0" cy="0" r="300" />
+
+        <!-- Titles -->
+        <text x="0" y="-340" class="caption title" text-anchor="middle">Metamorphosis (Ontology)</text>
+
+        <!-- Outer arrows (clockwise) -->
+        <g id="outerArrows"></g>
+
+        <!-- Outer nodes -->
+        <g id="outerNodes"></g>
+
+        <!-- Subtle fruit → seed cycle arc -->
+        <g id="outerCycle"></g>
+
+        <!-- Connectors to inner ring (toggled) -->
+        <g id="connectors"></g>
+
+        <!-- Inner cluster (within Enterprise) -->
+        <g id="innerCluster" class="innerHidden">
+          <circle class="ring" cx="260" cy="0" r="125" />
+          <text x="260" y="-160" class="caption title" text-anchor="middle">Metaphysics (Epistemology)</text>
+          <text x="260" y="-140" class="caption sub" text-anchor="middle">FEAOP: Play • Ontology • Agency • Epistemology • Frailty</text>
+          <g id="innerArrows"></g>
+          <g id="innerNodes"></g>
+          <!-- tertiary frailty cluster (hidden until Frailty clicked) -->
+          <g id="frailtyCluster" class="microHidden">
+            <g id="frailtyArrows"></g>
+            <g id="frailtyNodes"></g>
+          </g>
+          <!-- center pill -->
+          <rect x="206" y="-13" width="108" height="26" rx="13" class="pill-bg"></rect>
+          <text x="260" y="5" class="pill-text" text-anchor="middle">Ukubona</text>
+        </g>
+      </svg>
+
+      <!-- 5×5 Matrix Modal -->
+      <div id="matrixModal" class="modal" aria-hidden="true">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h3>5×5 Pentadic Matrix — Archetypes × Stages</h3>
+            <button class="modal-close" id="closeMatrix">Close (Esc)</button>
+          </div>
+          <table class="matrix" id="matrixTable" aria-label="5×5 matrix of archetypes by stage"></table>
+        </div>
+      </div>
+
+      <!-- tooltip element -->
+      <div id="tip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+    </main>
+  </div>
+
+<script>
+/* ======================= Data (dual view) ======================= */
+const VIEWS = {
+  default: {
+    legend: [
+      {name:'God (Plants/Seed)', c:'var(--p1)'}, {name:'Animal', c:'var(--p2)'}, {name:'Man', c:'var(--p3)'},
+      {name:'Enterprise', c:'var(--p4)'}, {name:'Systems', c:'var(--p5)'},
+      {name:'Play', c:'var(--i1)'}, {name:'Ontology', c:'var(--i2)'}, {name:'Agency', c:'var(--i3)'},
+      {name:'Epistemology', c:'var(--i4)'}, {name:'Frailty', c:'var(--i5)'}
+    ],
+    outer: [
+      { key:"god",        label:"God (Plants/Seed)", color:"var(--p1)", detail:[
+        "Creative origin; generative principle.",
+        "Start of the game loop (metamorphosis).",
+        "Seed ⇄ Fruit recursion: our forebears are the fruit that bore these seeds."
+      ]},
+      { key:"animal",     label:"Animal",     color:"var(--p2)", detail:[
+        "Instinct, sensation, pre-reflective adaptation.",
+        "What-is as lived, before naming."
+      ]},
+      { key:"man",        label:"Man",        color:"var(--p3)", detail:[
+        "Will and choice; symbolic action.",
+        "Techne and narrative planning.",
+        "“Man is a bridge” (Nietzsche): transitional form."
+      ]},
+      { key:"enterprise", label:"Enterprise", color:"var(--p4)", detail:[
+        "Organized coordination; institutions and scale.",
+        "Perspectivity: orchestrates nested metaphysics (Ukubona).",
+        "Click to reveal FEAOP (inner pentad)."
+      ], nested:true},
+      { key:"systems",    label:"Systems",    color:"var(--p5)", detail:[
+        "Complex interlock; emergence and constraints.",
+        "Where limits and fragility become visible."
+      ]}
+    ],
+    inner: [
+      { key:"play",       label:"Play",       color:"var(--i1)", detail:[
+        "Tactical / Unplanned; generativity.",
+        "Nietzsche: child (innocent revaluation)."
+      ]},
+      { key:"ontology",   label:"Ontology",   color:"var(--i2)", detail:[
+        "Informational / Ritualized categories.",
+        "Marx: base constraints surface as 'what-is'."
+      ]},
+      { key:"agency",     label:"Agency",     color:"var(--i3)", detail:[
+        "Strategic / Planned choice and design.",
+        "Where capture attempts begin (UX, incentives)."
+      ]},
+      { key:"epistemology",label:"Epistemology",color:"var(--i4)", detail:[
+        "Operational / Measurement & iteration.",
+        "Marx: ideology; Nietzsche: health/force of interpretation."
+      ]},
+      { key:"frailty",    label:"Frailty",    color:"var(--i5)", detail:[
+        "Existential coordination with other systems.",
+        "Fried Physical Frailty Phenotype (5):",
+        "1) Unintentional weight loss",
+        "2) Exhaustion",
+        "3) Weakness (grip strength)",
+        "4) Slowness (gait speed)",
+        "5) Low physical activity"
+      ]}
+    ]
+  },
+
+  nm: {
+    legend: [
+      {name:'God (Plants/Seed) → Bourgeois/Land/Plants', c:'var(--p1)'}, {name:'Animal → Serf', c:'var(--p2)'},
+      {name:'Man → Worker', c:'var(--p3)'}, {name:'Enterprise → User/APIs', c:'var(--p4)'},
+      {name:'Systems → Platform', c:'var(--p5)'},
+      {name:'Play (child)', c:'var(--i1)'}, {name:'Ontology (categories)', c:'var(--i2)'},
+      {name:'Agency (design/strategy)', c:'var(--i3)'}, {name:'Epistemology (ops/metrics)', c:'var(--i4)'},
+      {name:'Frailty (camel)', c:'var(--i5)'}
+    ],
+    outer: [
+      { key:"god",        label:"God (Plants/Seed) — Bourgeois/Land/Plants", color:"var(--p1)", detail:[
+        "Ownership of origin inputs (myth/resource/seed).",
+        "Sets frames that feel 'natural'. Nietzsche: noble valuation.",
+        "Seed ⇄ Fruit recursion: our forebears are the fruit that bore these seeds."
+      ]},
+      { key:"animal",     label:"Animal — Serf", color:"var(--p2)", detail:[
+        "Necessity-bound labor; subsistence coupling to land.",
+        "Pre-reflective work under inherited structure."
+      ]},
+      { key:"man",        label:"Man — Worker", color:"var(--p3)", detail:[
+        "Symbolic/technical labor; alienation as epistemic split.",
+        "Nietzsche: 'bridge'—transitional type under modernity."
+      ]},
+      { key:"enterprise", label:"Enterprise — User/APIs", color:"var(--p4)", detail:[
+        "Coordinated attention & labor via UX and protocols.",
+        "Dopamine/“opium”: incentive gradients that modulate agency.",
+        "Click to reveal how FEAOP is tuned/captured."
+      ], nested:true},
+      { key:"systems",    label:"Systems — Platform", color:"var(--p5)", detail:[
+        "Protocol power; network externalities; lock-in.",
+        "Emergent constraints appear as 'fate' (Nietzsche) / 'structure' (Marx)."
+      ]}
+    ],
+    inner: [
+      { key:"play",       label:"Play — Child", color:"var(--i1)", detail:[
+        "Generative exploration; novelty-seeking.",
+        "UX: discovery loops; variable rewards initiate capture."
+      ]},
+      { key:"ontology",   label:"Ontology — Categories", color:"var(--i2)", detail:[
+        "Naming & ritual; defaults become rails.",
+        "UX: information architecture sets what feels possible."
+      ]},
+      { key:"agency",     label:"Agency — Design/Strategy", color:"var(--i3)", detail:[
+        "Planful action under incentives.",
+        "UX: choice architecture; dopamine-aligned funnels."
+      ]},
+      { key:"epistemology",label:"Epistemology — Ops/Metrics", color:"var(--i4)", detail:[
+        "Measure, A/B, iterate; map > territory risks.",
+        "Marx: ideology; Nietzsche: health/strength of interpretation."
+      ]},
+      { key:"frailty",    label:"Frailty — Camel", color:"var(--i5)", detail:[
+        "Energy limits & degradation; burnout/overuse.",
+        "Fried 5: WL, Exhaustion, Weakness, Slowness, Low activity."
+      ]}
+    ]
+  }
+};
+
+/* ======================= 5×5 Matrix Data ======================= */
+const MATRIX = {
+  stages: ["Play","Ontology","Agency","Epistemology","Frailty"],
+  rows: [
+    { track: "Absurd Films", cells: [
+      "Anthony & Cleopatra — Passion, dramatic ignition",
+      "The Dude’s Rug — Ties the room together",
+      "A Serious Man — Existential decision pressure",
+      "Othello / Iago — Narrative manipulation",
+      "Henry IV / Falstaff — World-weariness & decay"
+    ]},
+    { track: "Marx / Ontology", cells: [
+      "God / Seed / Play — Parameters set",
+      "Animal / Trunk / Ontology — Laws crystallize",
+      "Man / Branching / Agency — Forks & competition",
+      "Enterprise / Canopy / Epistemology — Organize truth",
+      "System / Fruit / Wear–Tear — Entropy & turnover"
+    ]},
+    { track: "Nietzsche / Agency", cells: [
+      "Child / Play — Innocent creativity",
+      "Young / Ontology — Naive form-taking",
+      "Pride / Agency — Will-to-power in action",
+      "Lion / Values — Revaluation of values",
+      "Camel / Duty — Burden-bearing to collapse"
+    ]},
+    { track: "Pyromancer / Epistemology", cells: [
+      "Diet / Exhaustion / World AI — Baseline laws",
+      "Fitness / Weight Loss / Perception AI — Observe & frame",
+      "Games / Speed / Agentic AI — Act within constraints",
+      "Health / Activity / Generative AI — Create & mutate meaning",
+      "Phenotype / Aging / Embodied AI — Tangible, aging instantiation"
+    ]},
+    { track: "Orwell / Frailty", cells: [
+      "Old Major’s Dream — Ideal seed",
+      "Boxer & Clover — Loyal embodiment",
+      "Snowball vs. Napoleon — Strategic rivalry",
+      "Napoleon’s Rewrite — Codified propaganda",
+      "Benjamin’s Cynicism — Decay, seed for next cycle"
+    ]}
+  ]
+};
+
+/* ======================= DOM refs ======================= */
+const svgNS = 'http://www.w3.org/2000/svg';
+const outerNodesG = document.getElementById('outerNodes');
+const innerNodesG = document.getElementById('innerNodes');
+const innerCluster = document.getElementById('innerCluster');
+const panelTitle = document.getElementById('panelTitle');
+const panelTags  = document.getElementById('panelTags');
+const panelList  = document.getElementById('panelList');
+const legend     = document.getElementById('legend');
+const connectorsG= document.getElementById('connectors');
+const toggleConnectBtn = document.getElementById('toggleConnect');
+const toggleFrailtyBtn = document.getElementById('toggleFrailty');
+const frailtyBox = document.getElementById('frailtyBox');
+const resetBtn   = document.getElementById('resetBtn');
+const frailtyCluster = document.getElementById('frailtyCluster');
+const frailtyNodesG  = document.getElementById('frailtyNodes');
+const frailtyArrowsG = document.getElementById('frailtyArrows');
+const toggleNM = document.getElementById('toggleNM');
+const outerCycleG = document.getElementById('outerCycle');
+const tip = document.getElementById('tip');
+/* Matrix refs */
+const openMatrixBtn = document.getElementById('openMatrix');
+const matrixModal   = document.getElementById('matrixModal');
+const closeMatrixBtn= document.getElementById('closeMatrix');
+const matrixTable   = document.getElementById('matrixTable');
+
+/* ======================= State & Utils ======================= */
+let VIEW = 'default';
+
+function polar(n, r, startDeg=90){
+  const pts=[]; const step=360/n;
+  for(let i=0;i<n;i++){
+    const a=(startDeg+i*step)*Math.PI/180; pts.push([r*Math.cos(a), r*Math.sin(a)]);
+  }
+  return pts;
+}
+
+function makeNode({x,y,r=44,label,color,key,cls='node fade-in'}, onClick){
+  const g=document.createElementNS(svgNS,'g');
+  g.setAttribute('class',cls);
+  g.setAttribute('tabindex','0');
+  g.setAttribute('role','button');
+  g.setAttribute('data-key',key);
+  const c=document.createElementNS(svgNS,'circle');
+  c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',r);
+  c.setAttribute('fill',color);
+  g.appendChild(c);
+  const t=document.createElementNS(svgNS,'text');
+  t.setAttribute('x',x); t.setAttribute('y',y+5);
+  t.setAttribute('text-anchor','middle');
+  t.setAttribute('font-size','14');
+  t.textContent=label;
+  g.appendChild(t);
+  g.addEventListener('click',()=>onClick(key));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onClick(key);}});
+  return g;
+}
+
+function clear(el){while(el.firstChild) el.removeChild(el.firstChild)}
+
+function setPanel(title,tags=[],items=[]){
+  panelTitle.textContent=title;
+  panelTags.innerHTML = tags.map(t=>'<span class="tag">'+t+'</span>').join('');
+  panelList.innerHTML = items.map(li=>'<li>'+li+'</li>').join('');
+}
+
+/* ======================= Legend ======================= */
+function drawLegend(){
+  const entries = VIEWS[VIEW].legend;
+  legend.innerHTML = entries.map(e=>'<div class="row"><span class="swatch" style="background:'+e.c+'"></span>'+e.name+'</div>').join('');
+}
+
+/* ======================= Outer ring ======================= */
+function drawOuter(){
+  clear(outerNodesG); clear(document.getElementById('outerArrows')); clear(outerCycleG);
+  const pos=polar(5,300);
+  const arrowsG=document.getElementById('outerArrows');
+
+  // clockwise arrows among nodes
+  for(let i=0;i<5;i++){
+    const [x1,y1]=pos[i]; const [x2,y2]=pos[(i+1)%5];
+    const p=document.createElementNS(svgNS,'path');
+    const mx=(x1+x2)/2, my=(y1+y2)/2; const cx=mx*0.9, cy=my*0.9;
+    p.setAttribute('d','M '+x1+' '+y1+' Q '+cx+' '+cy+' '+x2+' '+y2);
+    p.setAttribute('class','arrow');
+    p.setAttribute('marker-end','url(#arrowhead)');
+    arrowsG.appendChild(p);
+  }
+
+  // subtle dashed cycle arc (fruit → seed)
+  {
+    const [sx,sy]=pos[4]; // systems
+    const [gx,gy]=pos[0]; // god
+    const q=document.createElementNS(svgNS,'path');
+    const midx=(sx+gx)/2, midy=(sy+gy)/2;
+    const ctrlx=midx*1.05, ctrly=midy*1.05;
+    q.setAttribute('d','M '+sx+' '+sy+' Q '+ctrlx+' '+ctrly+' '+gx+' '+gy);
+    q.setAttribute('class','cycle');
+    q.setAttribute('tabindex','0');
+    q.setAttribute('role','button');
+    q.setAttribute('aria-label','Fruit to seed: Systems cycles back to God');
+    q.addEventListener('mouseenter', (e)=> showTip(e, 'Fruit → Seed: Systems cycles back to God (our forebears are the fruit).'));
+    q.addEventListener('mousemove', (e)=> moveTip(e));
+    q.addEventListener('mouseleave', hideTip);
+    q.addEventListener('focus', (e)=> showTipFocusNearPath(q, 'Fruit → Seed: Systems cycles back to God (our forebears are the fruit).'));
+    q.addEventListener('blur', hideTip);
+    outerCycleG.appendChild(q);
+  }
+
+  // nodes
+  VIEWS[VIEW].outer.forEach((d,i)=>{
+    const [x,y]=pos[i];
+    const node=makeNode({x,y,r:54,label:d.label,color:d.color,key:d.key,cls:'node fade-in delay-'+(i+1)+' glow'}, onOuterClick);
+    outerNodesG.appendChild(node);
+  });
+
+  setPanel('Metamorphosis', ['Outer ring', VIEW==='nm'?'Nietzsche/Marx view':'Default view'], [
+    'Click a node to see details.',
+    'Click Enterprise to reveal the nested Metaphysics pentad (FEAOP).',
+    'Fruit → Seed: Systems cycles back to God.'
+  ]);
+}
+
+/* ======================= Inner ring ======================= */
+function drawInner(show){
+  const innerG=innerNodesG; const arrowsG=document.getElementById('innerArrows');
+  if(!show){
+    innerCluster.classList.remove('innerShown'); innerCluster.classList.add('innerHidden');
+    clear(innerG); clear(arrowsG); clear(connectorsG);
+    frailtyCluster.classList.remove('microShown'); frailtyCluster.classList.add('microHidden');
+    clear(frailtyNodesG); clear(frailtyArrowsG);
+    toggleConnectBtn.setAttribute('aria-pressed','false');
+    return;
+  }
+  innerCluster.classList.remove('innerHidden'); innerCluster.classList.add('innerShown');
+  clear(innerG); clear(arrowsG);
+  const baseX=260, baseY=0; const pos=polar(5,125);
+  const innerPos = {};
+  for(let i=0;i<5;i++){
+    const [x1,y1]=pos[i]; const [x2,y2]=pos[(i+1)%5];
+    const p=document.createElementNS(svgNS,'path');
+    const X1=baseX+x1, Y1=baseY+y1, X2=baseX+x2, Y2=baseY+y2;
+    const mx=(X1+X2)/2, my=(Y1+Y2)/2; const cx=baseX+(mx-baseX)*0.9, cy=baseY+(my-baseY)*0.9;
+    p.setAttribute('d','M '+X1+' '+Y1+' Q '+cx+' '+cy+' '+X2+' '+Y2);
+    p.setAttribute('class','arrow');
+    p.setAttribute('marker-end','url(#arrowhead)');
+    arrowsG.appendChild(p);
+  }
+  const keys=['play','ontology','agency','epistemology','frailty'];
+  pos.forEach(([x,y],i)=>{
+    const d=VIEWS[VIEW].inner[i];
+    const absX=baseX+x, absY=baseY+y; innerPos[keys[i]] = [absX, absY];
+    const node=makeNode({x:absX,y:absY,r:36,label:d.label,color:d.color,key:d.key,cls:'node fade-in delay-'+(i+1)}, onInnerClick);
+    innerG.appendChild(node);
+  });
+  window.__innerPos = innerPos;
+}
+
+/* ======================= Frailty micro-pentad ======================= */
+function drawFrailty(show){
+  clear(frailtyNodesG); clear(frailtyArrowsG);
+  if(!show){
+    frailtyCluster.classList.remove('microShown'); frailtyCluster.classList.add('microHidden');
+    return;
+  }
+  const fp = (window.__innerPos && window.__innerPos['frailty']) || [260,0];
+  const [cx, cy] = fp;
+  const r = 55; // micro ring radius
+  const pos = polar(5, r);
+  for(let i=0;i<5;i++){
+    const [x1,y1]=pos[i]; const [x2,y2]=pos[(i+1)%5];
+    const p=document.createElementNS(svgNS,'path');
+    const X1=cx+x1, Y1=cy+y1, X2=cx+x2, Y2=cy+y2; const mx=(X1+X2)/2, my=(Y1+Y2)/2; const cx2=cx+(mx-cx)*0.9, cy2=cy+(my-cy)*0.9;
+    p.setAttribute('d','M '+X1+' '+Y1+' Q '+cx2+' '+cy2+' '+X2+' '+Y2);
+    p.setAttribute('class','arrow');
+    p.setAttribute('marker-end','url(#arrowhead)');
+    frailtyArrowsG.appendChild(p);
+  }
+  [
+    { key:'wl', label:'Weight loss' },
+    { key:'ex', label:'Exhaustion' },
+    { key:'wk', label:'Weakness' },
+    { key:'sl', label:'Slowness' },
+    { key:'la', label:'Low activity' }
+  ].forEach((d,i)=>{
+    const [x,y]=pos[i];
+    const g=document.createElementNS(svgNS,'g'); g.setAttribute('class','node tinyNode fade-in');
+    const c=document.createElementNS(svgNS,'circle'); c.setAttribute('cx', cx+x); c.setAttribute('cy', cy+y); c.setAttribute('r', 20); c.setAttribute('fill', 'var(--i5)'); g.appendChild(c);
+    const t=document.createElementNS(svgNS,'text'); t.setAttribute('x', cx+x); t.setAttribute('y', cy+y+3); t.setAttribute('text-anchor','middle'); t.textContent=d.label; g.appendChild(t);
+    frailtyNodesG.appendChild(g);
+  });
+  frailtyCluster.classList.remove('microHidden'); frailtyCluster.classList.add('microShown');
+}
+
+/* ======================= Connectors ======================= */
+function drawConnectors(on){
+  clear(connectorsG);
+  if(!on) return;
+  const outerPos=polar(5,300); const innerPos=polar(5,125);
+  const baseX=260, baseY=0;
+  for(let i=0;i<5;i++){
+    const [ox,oy]=outerPos[i]; const [ix,iy]=innerPos[i];
+    const line=document.createElementNS(svgNS,'line');
+    line.setAttribute('x1',ox); line.setAttribute('y1',oy);
+    line.setAttribute('x2',baseX+ix); line.setAttribute('y2',baseY+iy);
+    line.setAttribute('class','connector');
+    connectorsG.appendChild(line);
+    requestAnimationFrame(()=>{line.style.opacity=.9});
+  }
+}
+
+/* ======================= Tooltip helpers ======================= */
+function showTip(evt, text){
+  tip.textContent = text;
+  tip.style.opacity = '1';
+  tip.setAttribute('aria-hidden','false');
+  moveTip(evt);
+}
+function moveTip(evt){
+  const rect = evt.currentTarget.ownerSVGElement.getBoundingClientRect();
+  const x = evt.clientX - rect.left;
+  const y = evt.clientY - rect.top;
+  tip.style.left = (rect.left + x) + 'px';
+  tip.style.top  = (rect.top + y) + 'px';
+}
+function hideTip(){
+  tip.style.opacity = '0';
+  tip.setAttribute('aria-hidden','true');
+}
+function showTipFocusNearPath(pathEl, text){
+  const bbox = pathEl.getBoundingClientRect();
+  tip.textContent = text;
+  tip.style.opacity = '1';
+  tip.setAttribute('aria-hidden','false');
+  tip.style.left = (bbox.left + bbox.width/2) + 'px';
+  tip.style.top  = (bbox.top) + 'px';
+}
+
+/* ======================= Matrix Rendering ======================= */
+function renderMatrix(){
+  const head = `
+    <thead>
+      <tr>
+        <th></th>
+        ${MATRIX.stages.map(s=>`<th><span class="badge">${s}</span></th>`).join('')}
+      </tr>
+    </thead>`;
+  const body = `
+    <tbody>
+      ${MATRIX.rows.map(row=>{
+        return `<tr>
+          <th>${row.track}</th>
+          ${row.cells.map((txt, idx)=>{
+            const stageClass = ['stagePlay','stageOntology','stageAgency','stageEpistemology','stageFrailty'][idx];
+            return `<td class="${stageClass}" data-stage="${MATRIX.stages[idx]}" data-track="${row.track}">
+                      ${txt}
+                    </td>`;
+          }).join('')}
+        </tr>`;
+      }).join('')}
+    </tbody>`;
+  matrixTable.innerHTML = head + body;
+
+  matrixTable.querySelectorAll('td').forEach(td=>{
+    td.addEventListener('click', ()=>{
+      const stage = td.getAttribute('data-stage');
+      const track = td.getAttribute('data-track');
+      const map = { Play:'play', Ontology:'ontology', Agency:'agency', Epistemology:'epistemology', Frailty:'frailty' };
+      drawInner(true);
+      const key = map[stage];
+      const innerItem = VIEWS[VIEW].inner.find(i => i.key === key);
+      if(innerItem){
+        setPanel(`${stage} — ${track}`, ['Matrix click','FEAOP'], [td.textContent.trim(), ...innerItem.detail]);
+        drawFrailty(stage === 'Frailty');
+      } else {
+        setPanel(`${stage} — ${track}`, ['Matrix click'], [td.textContent.trim()]);
+      }
+      toggleMatrix(false);
+    });
+  });
+}
+
+function toggleMatrix(show){
+  if(show){
+    renderMatrix();
+    matrixModal.classList.add('show');
+    matrixModal.setAttribute('aria-hidden','false');
+  }else{
+    matrixModal.classList.remove('show');
+    matrixModal.setAttribute('aria-hidden','true');
+  }
+}
+
+/* ======================= Handlers ======================= */
+function onOuterClick(key){
+  const item=VIEWS[VIEW].outer.find(d=>d.key===key);
+  setPanel(item.label, ['Outer node', VIEW==='nm'?'Nietzsche/Marx':'Default'], item.detail);
+  if(key==='enterprise'){
+    drawInner(true);
+  } else {
+    drawInner(false);
+  }
+}
+
+function onInnerClick(key){
+  const item=VIEWS[VIEW].inner.find(d=>d.key===key);
+  setPanel(item.label + ' — Metaphysics', ['Inner node','FEAOP', VIEW==='nm'?'Nietzsche/Marx':'Default'], item.detail);
+  if(key==='frailty'){
+    drawFrailty(true);
+  } else {
+    drawFrailty(false);
+  }
+}
+
+/* ======================= UI controls & Hotkeys ======================= */
+resetBtn.addEventListener('click',()=>{ drawLegend(); drawOuter(); drawInner(false); });
+
+toggleConnectBtn.addEventListener('click',()=>{
+  const pressed=toggleConnectBtn.getAttribute('aria-pressed')==='true';
+  toggleConnectBtn.setAttribute('aria-pressed', String(!pressed));
+  drawConnectors(!pressed && innerCluster.classList.contains('innerShown'));
+});
+
+toggleFrailtyBtn.addEventListener('click',()=>{
+  const on = toggleFrailtyBtn.getAttribute('aria-pressed')==='true';
+  toggleFrailtyBtn.setAttribute('aria-pressed', String(!on));
+  frailtyBox.style.display = on ? 'none' : 'block';
+});
+
+toggleNM.addEventListener('click', ()=>{
+  const pressed = toggleNM.getAttribute('aria-pressed')==='true';
+  toggleNM.setAttribute('aria-pressed', String(!pressed));
+  VIEW = pressed ? 'default' : 'nm';
+  drawLegend();
+  drawOuter();
+  drawInner(false);
+});
+
+/* Matrix controls */
+openMatrixBtn.addEventListener('click', ()=> toggleMatrix(true));
+closeMatrixBtn.addEventListener('click', ()=> toggleMatrix(false));
+matrixModal.addEventListener('click', (e)=>{ if(e.target === matrixModal) toggleMatrix(false); });
+
+// Global hotkeys
+document.addEventListener('keydown', (e)=>{
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === 'n'){ e.preventDefault(); toggleNM.click(); }
+  if (k === 'c'){ e.preventDefault(); toggleConnectBtn.click(); }
+  if (k === 'f'){ e.preventDefault(); toggleFrailtyBtn.click(); }
+  if (k === 'r'){ e.preventDefault(); resetBtn.click(); }
+  if (k === 'm'){ e.preventDefault(); toggleMatrix(!matrixModal.classList.contains('show')); }
+  if (k === 'escape' && matrixModal.classList.contains('show')){ e.preventDefault(); toggleMatrix(false); }
+});
+
+/* ======================= Init + self-test ======================= */
+function runSelfTests(){
+  const errors=[];
+  if(!outerNodesG) errors.push('outerNodes group missing');
+  if(!innerNodesG) errors.push('innerNodes group missing');
+  if(typeof drawOuter!=="function") errors.push('drawOuter missing');
+  if(typeof drawInner!=="function") errors.push('drawInner missing');
+  if(typeof drawFrailty!=="function") errors.push('drawFrailty missing');
+  if(typeof renderMatrix!=="function") errors.push('renderMatrix missing');
+  if(errors.length){
+    console.error('[Manifesto self-test] FAIL:', errors.join('; '));
+  } else {
+    console.log('[Manifesto self-test] OK');
+  }
+}
+
+try{
+  drawLegend();
+  drawOuter();
+  runSelfTests();
+}catch(e){
+  console.error('Init error:', e);
+}
+</script>
+</body>
+</html>
